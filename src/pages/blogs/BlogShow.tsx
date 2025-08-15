@@ -1,8 +1,12 @@
 // BlogShow.tsx
 import { Show, SimpleShowLayout, TextField, ImageField } from "react-admin";
 
-const BlogShow = () => (
-  <Show>
+const BlogShowTitle = () => {
+  return <span>TLA | Blog Details</span>;
+};
+
+export const BlogShow = () => (
+  <Show title={<BlogShowTitle />}>
     <SimpleShowLayout>
       <TextField source="id" label="ID" />
       <TextField source="title" label="Title" />
