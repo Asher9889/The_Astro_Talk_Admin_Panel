@@ -11,10 +11,10 @@ const baseUrl = import.meta.env.VITE_SIMPLE_REST_URL;
 // Custom data provider that handles file uploads
 export const dataProvider: DataProvider = {
   ...baseDataProvider,
-   // Adapt getList response format
+  // Adapt getList response format
   getList: async (resource, params): Promise<GetListResult<any>> => {
     const url = new URL(`${baseUrl}/${resource}`);
-    
+
     // Preserve React-Admin query params (filter, range, sort)
     if (params.filter) {
       url.searchParams.set("filter", JSON.stringify(params.filter));
@@ -46,18 +46,19 @@ export const dataProvider: DataProvider = {
       total: json.total,
     };
   },
+
   create: async (resource, params) => {
     // Handle file uploads for blogs
     if (resource === "blogs" && params.data.image instanceof File) {
       const formData = new FormData();
-      
+
       // Add text fields
       Object.keys(params.data).forEach(key => {
         if (key !== 'image') {
           formData.append(key, params.data[key]);
         }
       });
-      
+
       // Add file
       if (params.data.image) {
         formData.append('image', params.data.image);
@@ -76,9 +77,9 @@ export const dataProvider: DataProvider = {
       }
 
       const data = await response.json();
-      return { data:data?.data };
+      return { data: data?.data };
     }
-    
+
     // For other resources, use the default provider
     return baseDataProvider.create(resource, params);
   },
@@ -93,43 +94,31 @@ export const dataProvider: DataProvider = {
       data: json.data, // unwrap the data object
     };
   },
+  // update
+  update: (resource, params) => {
+    const formData = new FormData();
+    formData.append("title", params.data.title);
+    formData.append("content", params.data.content);
 
-  
-  update: async (resource, params) => {
-    // Handle file uploads for blog updates
-    if (resource === "blogs" && params.data.image instanceof File) {
-      const formData = new FormData();
-      
-      // Add text fields
-      Object.keys(params.data).forEach(key => {
-        if (key !== 'image') {
-          formData.append(key, params.data[key]);
-        }
-      });
-      
-      // Add file
-      if (params.data.image) {
-        formData.append('image', params.data.image);
-      }
-
-      // Make the request with FormData
-      const url = `${import.meta.env.VITE_SIMPLE_REST_URL}/${resource}/${params.id}`;
-      const response = await fetch(url, {
-        method: 'PUT',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return { data };
+    // If image is a File object, send it
+    if (params.data.image && params.data.image.rawFile instanceof File) {
+      formData.append("image", params.data.image.rawFile);
     }
-    
-    // For other resources, use the default provider
-    return baseDataProvider.update(resource, params);
+
+    return fetch(`${baseUrl}/${resource}/${params.id}`, {
+      method: "PUT",
+      body: formData
+    })
+      .then(response => response.json())
+      .then(json => ({ data: json.data }));
   },
+  // Delete
+  delete: (resource, params) =>
+    fetch(`${baseUrl}/${resource}/${params.id}`, {
+      method: "DELETE"
+    })
+      .then(response => response.json())
+      .then(json => ({ data: json.data }))
 };
 
 
