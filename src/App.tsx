@@ -5,7 +5,7 @@ import { authProvider } from "./authProvider";
 import BlogCreate from "./pages/blogs/BlogCreate";
 import BlogList from "./pages/blogs/BlogList";
 import BlogShow from "./pages/blogs/BlogShow";
-
+import BlogEdit  from "./pages/blogs/BlogEdit";
 
 
 export const App = () => (
@@ -14,7 +14,7 @@ export const App = () => (
     dataProvider={dataProvider}
     authProvider={authProvider}
   >
-     <Resource name="blogs" list={BlogList} create={BlogCreate} edit={BlogShow}/>
-
+     <Resource name="blogs" list={BlogList} create={BlogCreate} show={BlogShow} edit={BlogEdit}/>
+ 
   </Admin>
 );
