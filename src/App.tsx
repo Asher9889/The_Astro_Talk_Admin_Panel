@@ -10,6 +10,7 @@ import BlogEdit  from "./pages/blogs/BlogEdit";
 
 export const App = () => (
   <Admin
+    basename={import.meta.env.PROD ? "/admin" : undefined}
     layout={Layout}
     dataProvider={dataProvider}
     authProvider={authProvider}
