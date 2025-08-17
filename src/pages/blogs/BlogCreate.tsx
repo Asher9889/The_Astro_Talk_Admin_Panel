@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNotify, useRedirect } from 'react-admin';
+
 import {
   Create,
   SimpleForm,
@@ -13,6 +15,8 @@ import { RichTextInput } from "ra-input-rich-text";
 
 const BlogCreate = () => {
   const [preview, setPreview] = useState<string | null>(null);
+  const notify = useNotify();
+  const redirect = useRedirect();
 
   // Clean up preview URL on component unmount
   useEffect(() => {
@@ -82,6 +86,8 @@ const BlogCreate = () => {
             URL.revokeObjectURL(preview);
             setPreview(null);
           }
+          notify('Blog created successfully!', { type: 'success' });
+          redirect('/blogs');  // or redirect to wherever you want
         },
       }}
     >
